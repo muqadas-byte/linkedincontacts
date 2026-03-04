@@ -18,7 +18,8 @@ from typing import List, Dict, Optional
 
 APOLLO_SEARCH_ENDPOINT = "https://api.apollo.io/api/v1/mixed_people/api_search"
 APOLLO_MATCH_ENDPOINT  = "https://api.apollo.io/api/v1/people/match"
-APOLLO_ENRICH_ENDPOINT = "https://api.apollo.io/api/v1/people/enrichment"
+# Enrichment uses the same people/match endpoint — POST with id= returns full profile
+APOLLO_ENRICH_ENDPOINT = "https://api.apollo.io/api/v1/people/match"
 
 REQUEST_TIMEOUT = 20
 
@@ -275,20 +276,19 @@ def enrich_person(
             "error": str or None
         }
     """
-    params = {}
     if apollo_person_id:
-        params["id"] = apollo_person_id
+        payload = {"id": apollo_person_id, "reveal_personal_emails": False}
     elif linkedin_url:
-        params["linkedin_url"] = _normalize_linkedin(linkedin_url)
+        payload = {"linkedin_url": _normalize_linkedin(linkedin_url), "reveal_personal_emails": False}
     else:
         return {"profile": None, "found": False, "credits_remaining": None,
                 "error": "No apollo_person_id or linkedin_url provided"}
 
     try:
-        resp = requests.get(
+        resp = requests.post(
             APOLLO_ENRICH_ENDPOINT,
             headers=_headers(match_key),
-            params=params,
+            json=payload,
             timeout=REQUEST_TIMEOUT,
         )
 
