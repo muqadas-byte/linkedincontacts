@@ -252,9 +252,15 @@ if staff_profiles:
         enriched  = person.get("enriched", False)
         grant_rel = person.get("is_grant_relevant", False)
         near_miss = person.get("near_miss", False)
+        photo_url = person.get("photo_url") or ""
 
         with st.container():
-            col_a, col_b, col_c, col_d = st.columns([3, 3, 2, 2])
+            col_photo, col_a, col_b, col_c, col_d = st.columns([1, 3, 3, 2, 2])
+            with col_photo:
+                if photo_url:
+                    st.image(photo_url, width=56)
+                else:
+                    st.markdown("👤")
             with col_a:
                 st.markdown(f"**{icon} {name}**")
                 if irs_title:
