@@ -12,6 +12,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from utils.metrics_calc import compute_metrics
+from utils.supabase_client import get_or_create_client, auto_restore_session
 
 st.set_page_config(page_title="Metrics Dashboard", page_icon="📈", layout="wide")
 st.title("📈 Metrics Dashboard")
@@ -19,6 +20,20 @@ st.caption("Experiment results against Go/No-Go thresholds from Section 5.6")
 
 # ─── Data ─────────────────────────────────────────────────────────────────────
 results = st.session_state.get("experiment_results", {})
+
+if not results:
+    sb, _ = get_or_create_client()
+    if sb:
+        try:
+            with st.spinner("Loading results from Supabase..."):
+                session_id, restored = auto_restore_session(sb)
+                if session_id and restored:
+                    st.session_state["active_session_id"] = session_id
+                    st.session_state["experiment_results"] = restored
+                    results = restored
+        except Exception:
+            pass
+
 if not results:
     st.info("No results yet. Run the experiment first.")
     st.stop()

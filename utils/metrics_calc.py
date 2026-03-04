@@ -80,10 +80,10 @@ def compute_metrics(funder_results: List[Dict]) -> Dict:
         if total_past > 0 else 0
     )
 
-    # Metric 7: Cost per Funder (Serper only — PDL search is free)
-    # Serper: $0.001/query × ~7 queries avg = ~$0.007/funder
+    # Metric 7: Cost per Funder (SerpApi only — PDL search is free)
+    # SerpApi: $0.015/query × ~7 queries avg = ~$0.105/funder (Developer plan)
     total_queries = sum(r.get("serper_queries_run", 0) for r in funder_results)
-    total_serper_cost = total_queries * 0.001
+    total_serper_cost = total_queries * 0.015
     cost_per_funder = (
         total_serper_cost / len(funder_results)
         if funder_results else 0

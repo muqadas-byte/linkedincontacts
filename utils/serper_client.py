@@ -1,6 +1,6 @@
 """
 serper_client.py
-Handles all Google Search discovery via Serper.dev.
+Handles all Google Search discovery via SerpApi.
 Implements the 5 query types from Section 5.3 of the experiment spec.
 """
 import re
@@ -8,7 +8,7 @@ import time
 import requests
 from typing import List, Dict, Optional, Tuple
 
-SERPER_ENDPOINT = "https://google.serper.dev/search"
+SERPAPI_ENDPOINT = "https://serpapi.com/search"
 LINKEDIN_PROFILE_RE = re.compile(r"linkedin\.com/in/([\w\-]+)", re.IGNORECASE)
 
 # How many organic results to request per query
@@ -18,11 +18,11 @@ QUERY_DELAY = 0.2
 
 
 class SerperAPIError(Exception):
-    """Raised when Serper API returns a non-200 response."""
+    """Raised when SerpApi returns a non-200 response or an error body."""
     def __init__(self, status_code: int, message: str):
         self.status_code = status_code
         self.message = message
-        super().__init__(f"Serper API error {status_code}: {message}")
+        super().__init__(f"SerpApi error {status_code}: {message}")
 
 
 class SerperRateLimitError(SerperAPIError):
@@ -37,21 +37,21 @@ class SerperAuthError(SerperAPIError):
 
 def _call_serper(api_key: str, query: str, num: int = RESULTS_PER_QUERY) -> Dict:
     """
-    Make a single search request to Serper.dev.
+    Make a single search request to SerpApi.
     Returns the raw JSON response dict.
     Raises SerperAPIError subclasses on failure.
     """
-    headers = {
-        "X-API-KEY": api_key,
-        "Content-Type": "application/json",
+    params = {
+        "engine": "google",
+        "q": query,
+        "num": num,
+        "api_key": api_key,
     }
-    payload = {"q": query, "num": num}
 
     try:
-        resp = requests.post(
-            SERPER_ENDPOINT,
-            headers=headers,
-            json=payload,
+        resp = requests.get(
+            SERPAPI_ENDPOINT,
+            params=params,
             timeout=15,
         )
     except requests.exceptions.Timeout:
@@ -60,28 +60,38 @@ def _call_serper(api_key: str, query: str, num: int = RESULTS_PER_QUERY) -> Dict
         raise SerperAPIError(0, f"Connection error: {str(e)}")
 
     if resp.status_code == 401:
-        raise SerperAuthError(401, "Invalid or missing Serper API key")
+        raise SerperAuthError(401, "Invalid or missing SerpApi API key")
     if resp.status_code == 429:
-        raise SerperRateLimitError(429, "Serper rate limit exceeded — slow down requests")
+        raise SerperRateLimitError(429, "SerpApi rate limit exceeded — slow down requests")
     if resp.status_code == 403:
-        raise SerperAPIError(403, "Serper API quota exhausted or plan limit reached")
+        raise SerperAPIError(403, "SerpApi quota exhausted or plan limit reached")
     if not resp.ok:
         try:
-            detail = resp.json().get("message", resp.text[:200])
+            detail = resp.json().get("error", resp.text[:200])
         except Exception:
             detail = resp.text[:200]
         raise SerperAPIError(resp.status_code, detail)
 
-    return resp.json()
+    data = resp.json()
+
+    # SerpApi may also return errors in a 200 response body
+    if "error" in data:
+        err_msg = data["error"]
+        if "invalid api" in err_msg.lower() or "api_key" in err_msg.lower():
+            raise SerperAuthError(401, err_msg)
+        raise SerperAPIError(400, err_msg)
+
+    return data
 
 
 def _extract_linkedin_profiles(serp_result: Dict, query_type: str) -> List[Dict]:
     """
-    Parse organic results from a Serper response.
+    Parse organic results from a SerpApi response.
     Returns a list of dicts: {linkedin_url, name_hint, title_hint, query_type, snippet}
     """
     profiles = []
-    organic = serp_result.get("organic") or []
+    # SerpApi uses "organic_results" (vs Serper's "organic")
+    organic = serp_result.get("organic_results") or []
 
     for item in organic:
         link = item.get("link") or ""

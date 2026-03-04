@@ -9,6 +9,7 @@ import streamlit as st
 import pandas as pd
 import json
 import io
+from utils.supabase_client import get_or_create_client, auto_restore_session
 
 st.set_page_config(page_title="Results", page_icon="📋", layout="wide")
 st.title("📋 Results Explorer")
@@ -18,15 +19,16 @@ st.caption("Per-funder discovery and matching results")
 results = st.session_state.get("experiment_results", {})
 
 if not results:
-    # Try loading from Supabase
-    sb = st.session_state.get("supabase_client")
-    session_id = st.session_state.get("active_session_id")
-    if sb and session_id:
+    # Auto-connect and try loading the most recent session
+    sb, _ = get_or_create_client()
+    if sb:
         try:
             with st.spinner("Loading results from Supabase..."):
-                raw = sb.get_funder_results(session_id)
-                for row in raw:
-                    results[row["ein"]] = row
+                session_id, restored = auto_restore_session(sb)
+                if session_id and restored:
+                    st.session_state["active_session_id"] = session_id
+                    st.session_state["experiment_results"] = restored
+                    results = restored
         except Exception as e:
             st.error(f"Failed to load from Supabase: {e}")
 
@@ -229,7 +231,7 @@ if selected_ein:
 
     # Serper query detail
     if r.get("merged_staff"):
-        with st.expander("🔍 Serper Query Detail", expanded=False):
+        with st.expander("🔍 SerpApi Query Detail", expanded=False):
             st.markdown(f"""
             - Queries run: **{r.get('serper_queries_run', 0)}**
             - LinkedIn URLs found: **{r.get('serper_urls_found', 0)}**

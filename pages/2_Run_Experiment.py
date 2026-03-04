@@ -24,8 +24,8 @@ st.caption("Execute the full discovery + enrichment + matching pipeline")
 errors = []
 if not st.session_state.get("funders_loaded"):
     errors.append("No funders loaded — upload 100randomFunders.json on the Home page")
-if not st.session_state.get("serper_key"):
-    errors.append("Serper API key missing — configure on Home page")
+if not st.session_state.get("serpapi_key"):
+    errors.append("SerpApi key missing — configure on Home page")
 if not st.session_state.get("pdl_key"):
     errors.append("Apollo API key missing — configure on Home page")
 
@@ -35,7 +35,7 @@ if errors:
     st.stop()
 
 funders = st.session_state["funders"]
-serper_key = st.session_state["serper_key"]
+serpapi_key = st.session_state["serpapi_key"]
 pdl_key = st.session_state["pdl_key"]
 match_threshold = st.session_state.get("match_threshold", 85)
 enrich_enabled = st.session_state.get("enrich_enabled", True)
@@ -95,7 +95,7 @@ st.subheader("📋 Pre-flight Summary")
 pf1, pf2, pf3, pf4 = st.columns(4)
 pf1.metric("Funders", len(funders_to_run))
 pf2.metric("With Leadership", total_with_leadership)
-pf3.metric("Est. Serper Queries", f"~{total_queries_estimate:,}")
+pf3.metric("Est. SerpApi Queries", f"~{total_queries_estimate:,}")
 pf4.metric("Est. Cost", f"~${cost_estimate:.2f}")
 
 st.divider()
@@ -153,10 +153,10 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
 
         if not serper_auth_failed:
             with status_placeholder.container():
-                st.caption(f"🔍 [{idx+1}/{len(funders_to_run)}] Serper discovery: {org_name}")
+                st.caption(f"🔍 [{idx+1}/{len(funders_to_run)}] SerpApi discovery: {org_name}")
             try:
                 serper_result = run_discovery(
-                    api_key=serper_key,
+                    api_key=serpapi_key,
                     org_name=org_name,
                     city=city,
                     state=state,
@@ -169,7 +169,7 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
                     if "AUTH_ERROR" in err:
                         serper_auth_failed = True
                         error_log_placeholder.error(
-                            f"⛔ Serper authentication failed — check your API key. Stopping discovery for remaining funders."
+                            f"⛔ SerpApi authentication failed — check your API key. Stopping discovery for remaining funders."
                         )
             except Exception as e:
                 api_errors.append({"step": "serper", "error": f"UNEXPECTED: {str(e)}"})
@@ -290,8 +290,9 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
                 })
                 sb.insert_staff_profiles(session_id, ein, org_name, merged_staff)
             except Exception as e:
-                # Non-fatal: log but continue
-                api_errors.append({"step": "supabase_write", "error": str(e)})
+                err_msg = str(e)
+                api_errors.append({"step": "supabase_write", "error": err_msg})
+                st.warning(f"⚠️ Supabase write failed for {org_name}: {err_msg[:120]}")
 
         # ── Live results table update ──────────────────────────────────────
         if all_funder_stats:
@@ -332,7 +333,7 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
     m1.metric("Funders Processed", len(all_funder_stats))
     m2.metric("IRS Match Rate", f"{metrics['irs_match_rate']:.1f}%")
     m3.metric("New Discovered", metrics["totals"]["discovered"])
-    m4.metric("Serper Cost", f"${metrics['total_serper_cost']:.3f}")
+    m4.metric("SerpApi Cost", f"${metrics['total_serper_cost']:.3f}")
     m5.metric("Time", f"{total_elapsed:.0f}s")
 
     decision = metrics["decision"]

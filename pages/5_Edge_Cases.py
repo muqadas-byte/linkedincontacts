@@ -11,6 +11,7 @@ import pandas as pd
 import json
 
 from utils.metrics_calc import compute_metrics
+from utils.supabase_client import get_or_create_client, auto_restore_session
 
 st.set_page_config(page_title="Edge Cases", page_icon="⚠️", layout="wide")
 st.title("⚠️ Edge Cases & Failure Analysis")
@@ -18,6 +19,20 @@ st.caption("Task 7: Document failures, categorize them, propose mitigations")
 
 # ─── Data ─────────────────────────────────────────────────────────────────────
 results = st.session_state.get("experiment_results", {})
+
+if not results:
+    sb, _ = get_or_create_client()
+    if sb:
+        try:
+            with st.spinner("Loading results from Supabase..."):
+                session_id, restored = auto_restore_session(sb)
+                if session_id and restored:
+                    st.session_state["active_session_id"] = session_id
+                    st.session_state["experiment_results"] = restored
+                    results = restored
+        except Exception:
+            pass
+
 if not results:
     st.info("No results yet. Run the experiment first.")
     st.stop()
@@ -100,12 +115,12 @@ st.divider()
 
 # API Authentication Errors (most critical)
 if failures["serper_auth_error"]:
-    st.subheader("🔴 Serper Authentication Errors")
+    st.subheader("🔴 SerpApi Authentication Errors")
     st.error(
         f"{len(failures['serper_auth_error'])} auth failures. "
-        "This stops discovery entirely — verify your Serper API key."
+        "This stops discovery entirely — verify your SerpApi key."
     )
-    st.markdown("**Mitigation:** Check API key is correct and account is active at serper.dev/dashboard")
+    st.markdown("**Mitigation:** Check API key is correct and account is active at serpapi.com/manage-api-key")
 
 if failures["pdl_auth_error"]:
     st.subheader("🔴 PDL Authentication Errors")
@@ -140,7 +155,7 @@ if failures["no_leadership"]:
 
 if failures["no_results"]:
     st.subheader("🔵 No LinkedIn Results Found")
-    st.info(f"{len(failures['no_results'])} funders returned zero LinkedIn URLs from Serper.")
+    st.info(f"{len(failures['no_results'])} funders returned zero LinkedIn URLs from SerpApi.")
     with st.expander("See affected funders"):
         st.dataframe(pd.DataFrame(failures["no_results"]), use_container_width=True)
     st.markdown("""

@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ### 2. Configure API keys
 Edit `.streamlit/secrets.toml`:
 ```toml
-SERPER_API_KEY = "your-serper-key"
+SERPAPI_KEY    = "your-serpapi-key"
 PDL_API_KEY    = "your-pdl-key"
 
 # Optional — for persisting results
@@ -48,7 +48,7 @@ streamlit run app.py
 
 ## Pipeline (per funder)
 
-1. **Serper Discovery** — 5 query types (broad, location, per-person, role, domain)
+1. **SerpApi Discovery** — 5 query types (broad, location, per-person, role, domain)
 2. **PDL People Search** — company search (free, no credits)
 3. **PDL Enrichment** — LinkedIn URL enrichment (1 credit/profile, configurable budget)
 4. **Fuzzy Matching** — Jaro-Winkler cross-reference against IRS leadership
@@ -61,10 +61,10 @@ streamlit run app.py
 
 | Service | Usage | Cost |
 |---------|-------|------|
-| Serper.dev | ~700 queries | ~$0.70 |
+| SerpApi | ~700 queries | ~$10.50 |
 | PDL Person Search | 100 company searches | $0 (free) |
 | PDL Enrichment | 100–200 profiles | $0 (free tier: 100/mo) |
-| **Total** | | **~$0.70** |
+| **Total** | | **~$10.50** |
 
 ---
 

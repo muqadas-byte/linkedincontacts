@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS funder_results (
   serper_urls_found     INTEGER DEFAULT 0,
   pdl_profiles_found    INTEGER DEFAULT 0,
   enrichments_done      INTEGER DEFAULT 0,
+  past_people_count     INTEGER DEFAULT 0,
+  past_detected_as_moved INTEGER DEFAULT 0,
   api_errors            JSONB DEFAULT '[]',
   processing_ms         INTEGER,
   created_at            TIMESTAMPTZ DEFAULT NOW()
@@ -225,6 +227,82 @@ class SupabaseClient:
 def get_schema_sql() -> str:
     """Return the SQL needed to set up the Supabase tables."""
     return SCHEMA_SQL
+
+
+def auto_restore_session(client) -> tuple:
+    """
+    Finds the most recent completed (or running) session and loads all its
+    funder results + staff profiles.
+    Returns (session_id_or_None, results_dict_or_empty).
+    """
+    import json as _json
+    try:
+        sessions = client.list_sessions()
+        if not sessions:
+            return None, {}
+
+        target = next((s for s in sessions if s.get("status") == "completed"), None)
+        if not target:
+            target = next((s for s in sessions if s.get("status") == "running"), None)
+        if not target:
+            return None, {}
+
+        session_id = target["id"]
+        funder_results = client.get_funder_results(session_id)
+        results_dict = {}
+
+        for row in funder_results:
+            ein = row.get("ein")
+            if not ein:
+                continue
+            result = dict(row)
+            api_errors = result.get("api_errors")
+            if isinstance(api_errors, str):
+                try:
+                    result["api_errors"] = _json.loads(api_errors)
+                except Exception:
+                    result["api_errors"] = []
+            elif api_errors is None:
+                result["api_errors"] = []
+            result["merged_staff"] = client.get_staff_profiles(session_id, ein)
+            results_dict[ein] = result
+
+        return session_id, results_dict
+    except Exception:
+        return None, {}
+
+
+def get_or_create_client() -> tuple:
+    """
+    Returns a connected SupabaseClient, auto-connecting from secrets if needed.
+    Returns (client, error_message) — error is None on success.
+    Reads credentials from session state first, then falls back to st.secrets.
+    """
+    import streamlit as st
+    if st.session_state.get("supabase_client"):
+        return st.session_state["supabase_client"], None
+
+    url = st.session_state.get("supabase_url")
+    key = st.session_state.get("supabase_key")
+
+    # Fall back to secrets.toml if not in session state
+    if not url or not key:
+        try:
+            url = url or st.secrets.get("SUPABASE_URL")
+            key = key or st.secrets.get("SUPABASE_ANON_KEY")
+        except Exception:
+            pass
+
+    if not url or not key:
+        return None, "Supabase credentials not found in session state or secrets.toml"
+
+    client, error = try_connect(url, key)
+    if client:
+        st.session_state["supabase_client"] = client
+        st.session_state["supabase_ok"] = True
+        st.session_state["supabase_url"] = url
+        st.session_state["supabase_key"] = key
+    return client, error
 
 
 def try_connect(url: str, key: str) -> tuple:

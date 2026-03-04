@@ -8,7 +8,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from utils.supabase_client import try_connect, get_schema_sql
+from utils.supabase_client import try_connect, get_schema_sql, get_or_create_client
 
 st.set_page_config(
     page_title="Staff Intel R&D Experiment",
@@ -22,7 +22,7 @@ def _init_state():
     defaults = {
         "funders": [],            # parsed funder list
         "funders_loaded": False,
-        "serper_key": "",
+        "serpapi_key": "",
         "pdl_key": "",
         "supabase_url": "",
         "supabase_key": "",
@@ -46,8 +46,8 @@ _init_state()
 # ─── Load API keys from secrets if available ─────────────────────────────────
 def _load_from_secrets():
     try:
-        if st.secrets.get("SERPER_API_KEY") and not st.session_state["serper_key"]:
-            st.session_state["serper_key"] = st.secrets["SERPER_API_KEY"]
+        if st.secrets.get("SERPAPI_KEY") and not st.session_state["serpapi_key"]:
+            st.session_state["serpapi_key"] = st.secrets["SERPAPI_KEY"]
         if st.secrets.get("APOLLO_API_KEY") and not st.session_state["pdl_key"]:
             st.session_state["pdl_key"] = st.secrets["APOLLO_API_KEY"]
         if st.secrets.get("SUPABASE_URL") and not st.session_state["supabase_url"]:
@@ -58,6 +58,9 @@ def _load_from_secrets():
         pass
 
 _load_from_secrets()
+
+# ─── Auto-connect to Supabase from secrets or session state ──────────────────
+get_or_create_client()  # silently connects; errors ignored here, shown in UI below
 
 # ─── Page header ─────────────────────────────────────────────────────────────
 st.title("🔬 Staff Intelligence R&D Experiment")
@@ -74,10 +77,10 @@ with col1:
         st.warning("📁 No funders loaded")
 
 with col2:
-    if st.session_state["serper_key"]:
-        st.success("🔍 Serper key set")
+    if st.session_state["serpapi_key"]:
+        st.success("🔍 SerpApi key set")
     else:
-        st.error("🔍 Serper key missing")
+        st.error("🔍 SerpApi key missing")
 
 with col3:
     if st.session_state["pdl_key"]:
@@ -138,13 +141,13 @@ with right:
     st.subheader("🔑 API Keys")
 
     serper_input = st.text_input(
-        "Serper.dev API Key",
-        value=st.session_state["serper_key"],
+        "SerpApi Key",
+        value=st.session_state["serpapi_key"],
         type="password",
-        placeholder="661508e825fc...",
+        placeholder="your-serpapi-key-here",
     )
     if serper_input:
-        st.session_state["serper_key"] = serper_input
+        st.session_state["serpapi_key"] = serper_input
 
     apollo_input = st.text_input(
         "Apollo.io API Key",
