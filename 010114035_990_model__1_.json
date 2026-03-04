@@ -1,0 +1,701 @@
+{
+  "organizationName": "Maine Education Association",
+  "orgType": "990",
+  "orgNtee": "J40",
+  "orgEin": "010114035",
+  "taxPeriodEndDate": "2023-08-31",
+  "taxPeriodBeginDate": "2022-09-01",
+  "taxYears": [
+    "2020",
+    "2021",
+    "2022",
+    "2023"
+  ],
+  "mission": {
+    "missionDesc": "We advocate for our members by influencing government policies, building community support for public education, expanding educational employees' rights, and promoting improvements in working conditions.",
+    "activityDesc": "Public education labor advocacy."
+  },
+  "overallFundingAvailable": "214770",
+  "formationYear": "1859",
+  "headquartersAddress": {
+    "type": "US",
+    "addressLine1": "35 Community Drive",
+    "addressLine2": "",
+    "city": "Augusta",
+    "state": "ME",
+    "zip": "04330",
+    "fullAddress": "35 Community Drive"
+  },
+  "website": "www.maineea.org",
+  "keyPeople": {
+    "count": 35,
+    "people": [
+      {
+        "name": "Grace Leavitt",
+        "title": "President",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "137081",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "43103"
+      },
+      {
+        "name": "Jesse Hargrove",
+        "title": "Vice President",
+        "averageHoursWeek": "10.00",
+        "compensationFromOrg": "15226",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Beth French",
+        "title": "Treasurer",
+        "averageHoursWeek": "5.00",
+        "compensationFromOrg": "7572",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Rebecca Cole",
+        "title": "NEA Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Evelyn Atwood",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Dennis Boyd",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3103",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Christopher Jones",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Lisa Leduc",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Rebecca Manchester",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3103",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Cedena McAvoy",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3069",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Thresa Mitchell",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Janice Murphy",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Tom Walsh",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Pamela Kinsey",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "1530",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Kristen Braun",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Susan Szava-Kovats",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Valarie Pinkham",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Lisa Henderson",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Kay Grindall",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Jay Nicholson",
+        "title": "Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "0",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Rick Beaule",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "1530",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Dina Goodwin",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Nancy Mitchell",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Alexandra Loukas",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "1530",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Jamie McAlpine",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3021",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Gary McGrane",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "3086",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Ellen Payne",
+        "title": "Past Director",
+        "averageHoursWeek": "2.00",
+        "compensationFromOrg": "1490",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "0"
+      },
+      {
+        "name": "Rachelle Bristol",
+        "title": "Executive Director",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "182423",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "85299"
+      },
+      {
+        "name": "Krystyna Dzialo",
+        "title": "Deputy Executive",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "150010",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "91415"
+      },
+      {
+        "name": "Tammy Simpson",
+        "title": "Business Manager",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "143985",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "82517"
+      },
+      {
+        "name": "John Bracciodieta",
+        "title": "UniServ Director",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "133386",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "78662"
+      },
+      {
+        "name": "Lee Pullen",
+        "title": "IT Coordinator",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "132591",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "72155"
+      },
+      {
+        "name": "Andrew Mason",
+        "title": "Past General Counsel",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "134057",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "76688"
+      },
+      {
+        "name": "Charles Betit",
+        "title": "Past UniServ Director",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "138236",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "72421"
+      },
+      {
+        "name": "Judi Beverage",
+        "title": "Past UniServ Director",
+        "averageHoursWeek": "40.00",
+        "compensationFromOrg": "132595",
+        "compensationFromRelatedOrg": "0",
+        "otherCompensation": "57614"
+      }
+    ]
+  },
+  "financialBreakdown": {
+    "2020": {
+      "taxYear": "2020",
+      "totalAssets": "5421246",
+      "totalLiabilities": "858855",
+      "revenue": "9134650",
+      "expenses": "8238113",
+      "netAssets": "4562391",
+      "totalGiving": "210553"
+    },
+    "2021": {
+      "taxYear": "2021",
+      "totalAssets": "6378027",
+      "totalLiabilities": "901914",
+      "revenue": "9353123",
+      "expenses": "8656350",
+      "netAssets": "5476113",
+      "totalGiving": "192686"
+    },
+    "2022": {
+      "taxYear": "2022",
+      "totalAssets": "7251288",
+      "totalLiabilities": "1172320",
+      "revenue": "9312665",
+      "expenses": "8550921",
+      "netAssets": "6078968",
+      "totalGiving": "237064"
+    },
+    "2023": {
+      "taxYear": "2023",
+      "totalAssets": "7525434",
+      "totalLiabilities": "814409",
+      "revenue": "9463505",
+      "expenses": "8862376",
+      "netAssets": "6711025",
+      "totalGiving": "214770"
+    }
+  },
+  "fundingInformation": {
+    "2020": {
+      "taxYear": "2020",
+      "grants": [
+        {
+          "gaGrantId": "546350d52ec54120ae592dcc82806252",
+          "recipientName": "MEA-Retired",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "23 Elizabeth Avenue",
+            "addressLine2": "",
+            "city": "Caribou",
+            "state": "ME",
+            "zip": "04736",
+            "fullAddress": "23 Elizabeth Avenue"
+          },
+          "recipientEin": "010465968",
+          "cashGrantAmount": "16500",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "4f57d78ed5f5412ca2583fc90f2559b6",
+          "recipientName": "Citizens Who Support Maine Public Schools - PAC",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "471266023",
+          "cashGrantAmount": "120000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "dd68a496a84046c0bdf69a8529d6b326",
+          "recipientName": "MEASO Retiree Health Insurance Premium Subsidy",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "300446659",
+          "cashGrantAmount": "18340",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        }
+      ],
+      "grantCount": 3
+    },
+    "2021": {
+      "taxYear": "2021",
+      "grants": [
+        {
+          "gaGrantId": "5b7235c6dab642b1a27fabfcc8efc604",
+          "recipientName": "MEA-Retired",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "23 Elizabeth Avenue",
+            "addressLine2": "",
+            "city": "Caribou",
+            "state": "ME",
+            "zip": "04736",
+            "fullAddress": "23 Elizabeth Avenue"
+          },
+          "recipientEin": "010465968",
+          "cashGrantAmount": "16500",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "47c207038d5442f9aaca05600998f80e",
+          "recipientName": "Citizens Who Support Maine Public Schools - PAC",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "471266023",
+          "cashGrantAmount": "120000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "8da4278cd157448cb56b936622335980",
+          "recipientName": "MEASO Retiree Health Insurance Subsidy",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "300446659",
+          "cashGrantAmount": "17491",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        }
+      ],
+      "grantCount": 3
+    },
+    "2022": {
+      "taxYear": "2022",
+      "grants": [
+        {
+          "gaGrantId": "24b7263037b24391a8e8239c0f19ad84",
+          "recipientName": "MEA-Retired",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "23 Elizabeth Avenue",
+            "addressLine2": "",
+            "city": "Caribou",
+            "state": "ME",
+            "zip": "04736",
+            "fullAddress": "23 Elizabeth Avenue"
+          },
+          "recipientEin": "010465968",
+          "cashGrantAmount": "21500",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "a366782c891a4a76a8600712c58aa9ef",
+          "recipientName": "Citizens Who Support Maine Public Schools - PAC",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "471266023",
+          "cashGrantAmount": "144000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "17b387c950a247439657c75dab5a1c50",
+          "recipientName": "MEASO Retiree Health Insurance Subsidy",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "300446659",
+          "cashGrantAmount": "24000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        }
+      ],
+      "grantCount": 3
+    },
+    "2023": {
+      "taxYear": "2023",
+      "grants": [
+        {
+          "gaGrantId": "efc2139eeb0e4f72bfdc6a3c04f042b4",
+          "recipientName": "MEA-Retired",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "23 Elizabeth Avenue",
+            "addressLine2": "",
+            "city": "Caribou",
+            "state": "ME",
+            "zip": "04736",
+            "fullAddress": "23 Elizabeth Avenue"
+          },
+          "recipientEin": "010465968",
+          "cashGrantAmount": "20000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "80bd2c391db44a7da19c320b0ccc3201",
+          "recipientName": "Citizens Who Support Maine Public Schools - PAC",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "471266023",
+          "cashGrantAmount": "120000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "22055fd8ddf14ceaa95e906842983ba9",
+          "recipientName": "MEASO Retiree Health Insurance Subsidy",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "300446659",
+          "cashGrantAmount": "12000",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Operational support",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "8d13171d7a2e47f8a79864d15e907b20",
+          "recipientName": "AFUM",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "010375611",
+          "cashGrantAmount": "5250",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Financial Assistance for Mediation/Arbitration Cost",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "c4105bac10a5471990e01f00cd85f2ff",
+          "recipientName": "Sanford",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "273005506",
+          "cashGrantAmount": "10445",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Financial Assistance for Mediation/Arbitration Cost",
+          "nteeTag": ""
+        },
+        {
+          "gaGrantId": "dfbd2fe93a3346e1b90fabf926c41b34",
+          "recipientName": "SAD 49",
+          "recipientAddress": {
+            "type": "US",
+            "addressLine1": "35 Community Drive",
+            "addressLine2": "",
+            "city": "Augusta",
+            "state": "ME",
+            "zip": "04330",
+            "fullAddress": "35 Community Drive"
+          },
+          "recipientEin": "452803110",
+          "cashGrantAmount": "6300",
+          "nonCashAssistanceAmount": "0",
+          "purpose": "Financial Assistance for Mediation/Arbitration Cost",
+          "nteeTag": ""
+        }
+      ],
+      "grantCount": 6
+    }
+  },
+  "locationDistribution": {
+    "2020": {
+      "us": {
+        "ME": {
+          "grantCount": 3,
+          "totalValue": 154840.0,
+          "averageValue": 51613.33
+        }
+      },
+      "foreign": {}
+    },
+    "2021": {
+      "us": {
+        "ME": {
+          "grantCount": 3,
+          "totalValue": 153991.0,
+          "averageValue": 51330.33
+        }
+      },
+      "foreign": {}
+    },
+    "2022": {
+      "us": {
+        "ME": {
+          "grantCount": 3,
+          "totalValue": 189500.0,
+          "averageValue": 63166.67
+        }
+      },
+      "foreign": {}
+    },
+    "2023": {
+      "us": {
+        "ME": {
+          "grantCount": 6,
+          "totalValue": 173995.0,
+          "averageValue": 28999.17
+        }
+      },
+      "foreign": {}
+    }
+  },
+  "orgNteeHistory": [
+    {
+      "nteeCode": "",
+      "activityNtee1": "J40",
+      "activityNtee2": "J40",
+      "activityNtee3": "B99",
+      "primaryActivityNtee": "J40",
+      "assignedNtee": ""
+    }
+  ]
+}

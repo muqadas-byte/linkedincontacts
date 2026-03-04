@@ -1,0 +1,240 @@
+"""
+app.py — Staff Intelligence R&D Experiment
+Home page + configuration + Supabase setup
+"""
+import streamlit as st
+import json
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+
+from utils.supabase_client import try_connect, get_schema_sql
+
+st.set_page_config(
+    page_title="Staff Intel R&D Experiment",
+    page_icon="🔬",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# ─── Session state defaults ───────────────────────────────────────────────────
+def _init_state():
+    defaults = {
+        "funders": [],            # parsed funder list
+        "funders_loaded": False,
+        "serper_key": "",
+        "pdl_key": "",
+        "supabase_url": "",
+        "supabase_key": "",
+        "supabase_client": None,
+        "supabase_ok": False,
+        "active_session_id": None,
+        "experiment_results": {},  # ein -> result dict
+        "experiment_running": False,
+        "experiment_done": False,
+        "match_threshold": 85,
+        "enrich_enabled": True,
+        "max_funders": 100,
+        "enrich_budget": 100,
+    }
+    for k, v in defaults.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
+
+_init_state()
+
+# ─── Load API keys from secrets if available ─────────────────────────────────
+def _load_from_secrets():
+    try:
+        if st.secrets.get("SERPER_API_KEY") and not st.session_state["serper_key"]:
+            st.session_state["serper_key"] = st.secrets["SERPER_API_KEY"]
+        if st.secrets.get("APOLLO_API_KEY") and not st.session_state["pdl_key"]:
+            st.session_state["pdl_key"] = st.secrets["APOLLO_API_KEY"]
+        if st.secrets.get("SUPABASE_URL") and not st.session_state["supabase_url"]:
+            st.session_state["supabase_url"] = st.secrets["SUPABASE_URL"]
+        if st.secrets.get("SUPABASE_ANON_KEY") and not st.session_state["supabase_key"]:
+            st.session_state["supabase_key"] = st.secrets["SUPABASE_ANON_KEY"]
+    except Exception:
+        pass
+
+_load_from_secrets()
+
+# ─── Page header ─────────────────────────────────────────────────────────────
+st.title("🔬 Staff Intelligence R&D Experiment")
+st.caption("100-Funder Validation · Google Search Discovery + PDL Enrichment")
+
+# ─── Status banner ───────────────────────────────────────────────────────────
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    if st.session_state["funders_loaded"]:
+        n = len(st.session_state["funders"])
+        st.success(f"📁 {n} funders loaded")
+    else:
+        st.warning("📁 No funders loaded")
+
+with col2:
+    if st.session_state["serper_key"]:
+        st.success("🔍 Serper key set")
+    else:
+        st.error("🔍 Serper key missing")
+
+with col3:
+    if st.session_state["pdl_key"]:
+        st.success("👥 Apollo key set")
+    else:
+        st.error("👥 Apollo key missing")
+
+with col4:
+    if st.session_state["supabase_ok"]:
+        st.success("🗄️ Supabase connected")
+    elif st.session_state["supabase_url"]:
+        st.warning("🗄️ Supabase not verified")
+    else:
+        st.info("🗄️ Supabase not configured")
+
+st.divider()
+
+# ─── Two-column layout ────────────────────────────────────────────────────────
+left, right = st.columns([1, 1])
+
+# ── Left: Load Funders JSON ───────────────────────────────────────────────────
+with left:
+    st.subheader("📁 Load Funders Data")
+    uploaded = st.file_uploader(
+        "Upload 100randomFunders.json",
+        type=["json"],
+        help="The 100-funder sample JSON from your Grant Assistant dataset",
+    )
+
+    if uploaded:
+        try:
+            raw = json.load(uploaded)
+            from utils.data_loader import extract_all_funders
+            funders = extract_all_funders(raw)
+            st.session_state["funders"] = funders
+            st.session_state["funders_loaded"] = True
+            st.success(f"Loaded {len(funders)} funders successfully")
+
+            # Show quick breakdown
+            segments = {"large": 0, "mid": 0, "small": 0, "unknown": 0}
+            no_leadership = 0
+            for f in funders:
+                seg = f.get("segment", "unknown")
+                segments[seg] = segments.get(seg, 0) + 1
+                if not f.get("leadership"):
+                    no_leadership += 1
+
+            st.caption(
+                f"Large: {segments['large']} | Mid: {segments['mid']} | "
+                f"Small: {segments['small']} | Unknown: {segments['unknown']} | "
+                f"No leadership: {no_leadership}"
+            )
+        except Exception as e:
+            st.error(f"Failed to parse JSON: {e}")
+
+# ── Right: API Configuration ──────────────────────────────────────────────────
+with right:
+    st.subheader("🔑 API Keys")
+
+    serper_input = st.text_input(
+        "Serper.dev API Key",
+        value=st.session_state["serper_key"],
+        type="password",
+        placeholder="661508e825fc...",
+    )
+    if serper_input:
+        st.session_state["serper_key"] = serper_input
+
+    apollo_input = st.text_input(
+        "Apollo.io API Key",
+        value=st.session_state["pdl_key"],
+        type="password",
+        placeholder="LYtIrKl3O4...",
+    )
+    if apollo_input:
+        st.session_state["pdl_key"] = apollo_input
+
+    st.divider()
+    st.subheader("🗄️ Supabase")
+
+    sb_url = st.text_input(
+        "Supabase Project URL",
+        value=st.session_state["supabase_url"],
+        placeholder="https://xxxx.supabase.co",
+    )
+    if sb_url:
+        st.session_state["supabase_url"] = sb_url
+
+    sb_key = st.text_input(
+        "Supabase Anon Key",
+        value=st.session_state["supabase_key"],
+        type="password",
+        placeholder="eyJhbGciOi...",
+    )
+    if sb_key:
+        st.session_state["supabase_key"] = sb_key
+
+    if st.button("🔌 Test Supabase Connection", use_container_width=True):
+        with st.spinner("Connecting..."):
+            client, error = try_connect(
+                st.session_state["supabase_url"],
+                st.session_state["supabase_key"],
+            )
+        if client:
+            st.session_state["supabase_client"] = client
+            st.session_state["supabase_ok"] = True
+            st.success("Connected to Supabase!")
+        else:
+            st.session_state["supabase_ok"] = False
+            st.error(f"Connection failed: {error}")
+
+st.divider()
+
+# ─── Supabase Schema Setup ────────────────────────────────────────────────────
+with st.expander("📋 Supabase Schema Setup — Run this SQL in your Supabase SQL editor"):
+    st.caption("Copy and run this in your Supabase project > SQL Editor to create the required tables.")
+    st.code(get_schema_sql(), language="sql")
+
+# ─── Experiment Settings ─────────────────────────────────────────────────────
+st.subheader("⚙️ Experiment Settings")
+
+s1, s2, s3 = st.columns(3)
+with s1:
+    threshold = st.slider(
+        "Fuzzy Match Threshold",
+        min_value=60, max_value=98, value=st.session_state["match_threshold"],
+        help="Minimum % similarity to consider an IRS person 'found' on LinkedIn",
+    )
+    st.session_state["match_threshold"] = threshold
+
+with s2:
+    max_funders = st.number_input(
+        "Max Funders to Process",
+        min_value=1, max_value=100,
+        value=st.session_state["max_funders"],
+        help="Set < 100 for a quick test run",
+    )
+    st.session_state["max_funders"] = int(max_funders)
+
+with s3:
+    enrich = st.toggle(
+        "Enable PDL Enrichment",
+        value=st.session_state["enrich_enabled"],
+        help="Uses 1 PDL credit per profile. Disable to test discovery only.",
+    )
+    st.session_state["enrich_enabled"] = enrich
+    if enrich:
+        budget = st.number_input(
+            "Max Enrichment Credits",
+            min_value=1, max_value=500,
+            value=st.session_state["enrich_budget"],
+            help="Hard cap on PDL credits consumed this run",
+        )
+        st.session_state["enrich_budget"] = int(budget)
+
+st.divider()
+st.info(
+    "**Next step:** Go to **🔬 Run Experiment** in the sidebar to start the pipeline. "
+    "Check **📊 Overview** first to explore your funder sample."
+)
