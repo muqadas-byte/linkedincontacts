@@ -169,6 +169,8 @@ def merge_staff_for_funder(
                 existing["full_name"] = p["full_name"]
             if not existing.get("current_title") and p.get("current_title"):
                 existing["current_title"] = p["current_title"]
+            if not existing.get("photo_url") and p.get("photo_url"):
+                existing["photo_url"] = p["photo_url"]
 
     # Enrich profiles where we have enrichment data
     for url, profile in all_discovered.items():
@@ -213,7 +215,7 @@ def merge_staff_for_funder(
             "person_name": display_name or profile.get("name_hint") or "",
             "irs_name": matched_irs.get("name") if matched_irs else "",
             "irs_title": matched_irs.get("title") if matched_irs else "",
-            "current_title": profile.get("current_title") or "",
+            "current_title": profile.get("current_title") or profile.get("title_hint") or "",
             "current_company": profile.get("current_company") or "",
             "linkedin_url": url,
             "photo_url": profile.get("photo_url") or "",
