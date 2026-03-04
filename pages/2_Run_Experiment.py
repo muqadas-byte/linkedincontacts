@@ -12,7 +12,7 @@ import pandas as pd
 from datetime import datetime
 
 from utils.serper_client import run_discovery, SerperAuthError
-from utils.apollo_client import search_people_by_company, enrich_person_by_linkedin
+from utils.apollo_client import search_people_by_company, match_person, enrich_person
 from utils.matching import merge_staff_for_funder, is_past_role
 from utils.metrics_calc import compute_metrics
 
@@ -26,8 +26,8 @@ if not st.session_state.get("funders_loaded"):
     errors.append("No funders loaded — upload 100randomFunders.json on the Home page")
 if not st.session_state.get("serpapi_key"):
     errors.append("SerpApi key missing — configure on Home page")
-if not st.session_state.get("pdl_key"):
-    errors.append("Apollo API key missing — configure on Home page")
+if not st.session_state.get("apollo_match_key"):
+    errors.append("Apollo Match key missing — configure on Home page")
 
 if errors:
     for e in errors:
@@ -36,7 +36,8 @@ if errors:
 
 funders = st.session_state["funders"]
 serpapi_key = st.session_state["serpapi_key"]
-pdl_key = st.session_state["pdl_key"]
+apollo_search_key = st.session_state.get("apollo_search_key", "")
+apollo_match_key = st.session_state["apollo_match_key"]
 match_threshold = st.session_state.get("match_threshold", 85)
 enrich_enabled = st.session_state.get("enrich_enabled", True)
 max_funders = st.session_state.get("max_funders", 100)
@@ -175,23 +176,28 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
                 api_errors.append({"step": "serper", "error": f"UNEXPECTED: {str(e)}"})
 
         # ── Task 3: Apollo People Search ──────────────────────────────────────
+        # Uses the dedicated search key on api/v1/mixed_people/api_search.
+        # Finds additional staff Apollo knows about (supplements SerpApi).
         with status_placeholder.container():
             st.caption(f"👥 [{idx+1}/{len(funders_to_run)}] Apollo search: {org_name}")
 
         pdl_search_result = {"profiles": [], "total_found": 0, "error": None}
-        try:
-            pdl_search_result = search_people_by_company(
-                api_key=pdl_key,
-                org_name=org_name,
-                website_domain=website_domain,
-                size=10,
-            )
-            if pdl_search_result.get("error"):
-                api_errors.append({"step": "apollo_search", "error": pdl_search_result["error"]})
-        except Exception as e:
-            api_errors.append({"step": "apollo_search", "error": f"UNEXPECTED: {str(e)}"})
+        if apollo_search_key:
+            try:
+                pdl_search_result = search_people_by_company(
+                    search_key=apollo_search_key,
+                    org_name=org_name,
+                    website_domain=website_domain,
+                    size=10,
+                )
+                if pdl_search_result.get("error"):
+                    api_errors.append({"step": "apollo_search", "error": pdl_search_result["error"]})
+            except Exception as e:
+                api_errors.append({"step": "apollo_search", "error": f"UNEXPECTED: {str(e)}"})
 
-        # ── Task 4: Apollo Enrichment ─────────────────────────────────────────
+        # ── Task 4: Apollo Match → Enrich ─────────────────────────────────────
+        # Step 6a: People Match  — LinkedIn URL → apollo_person_id (match key)
+        # Step 6b: People Enrich — apollo_person_id  → full profile  (match key)
         enrichment_results = {}
         enrichments_done = 0
 
@@ -200,7 +206,8 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
             enrich_candidates = []
             seen_urls = set()
 
-            # Prioritize: 1 exec-level + 1 program-level per funder
+            # Priority: SerpApi finds first (query-type C/D/E ranked higher),
+            # then Apollo Search supplements.
             all_discovered = serper_result.get("profiles", []) + pdl_search_result.get("profiles", [])
             for p in all_discovered:
                 url = p.get("linkedin_url") or ""
@@ -213,24 +220,47 @@ if st.button("🚀 Start Experiment", type="primary", use_container_width=True,
                 if credits_used >= enrich_budget:
                     break
 
+                # Step 6a — People Match
                 with status_placeholder.container():
-                    st.caption(f"⚡ [{idx+1}/{len(funders_to_run)}] Enriching: {url[-40:]}")
+                    st.caption(f"🔗 [{idx+1}/{len(funders_to_run)}] Matching: {url[-40:]}")
 
-                enrich_res = enrich_person_by_linkedin(pdl_key, url)
+                match_res = match_person(apollo_match_key, url)
+                if match_res.get("error"):
+                    err_msg = match_res["error"]
+                    api_errors.append({"step": "apollo_match", "url": url, "error": err_msg})
+                    if "AUTH_ERROR" in err_msg or "CREDITS_EXHAUSTED" in err_msg:
+                        break
+                    continue  # skip enrichment if match failed
+
+                if not match_res.get("found"):
+                    continue  # no match — nothing to enrich
+
+                apollo_id  = match_res.get("apollo_person_id", "")
+                matched_url = match_res.get("linkedin_url") or url
+
+                # Step 6b — People Enrichment
+                with status_placeholder.container():
+                    st.caption(f"⚡ [{idx+1}/{len(funders_to_run)}] Enriching: {matched_url[-40:]}")
+
+                enrich_res = enrich_person(
+                    apollo_match_key,
+                    apollo_person_id=apollo_id,
+                    linkedin_url=matched_url,
+                )
 
                 if enrich_res.get("error"):
                     err_msg = enrich_res["error"]
-                    api_errors.append({"step": "apollo_enrich", "url": url, "error": err_msg})
+                    api_errors.append({"step": "apollo_enrich", "url": matched_url, "error": err_msg})
                     if "CREDITS_EXHAUSTED" in err_msg or "AUTH_ERROR" in err_msg:
-                        # Stop enrichment entirely
                         break
 
                 if enrich_res.get("found") and enrich_res.get("profile"):
+                    # Store under the original SerpApi URL so matching.py lookup works
                     enrichment_results[url] = enrich_res["profile"]
                     enrichments_done += 1
                     credits_used += 1
 
-                # Remaining credits feedback
+                # Low-credits warning
                 remaining = enrich_res.get("credits_remaining")
                 if remaining is not None and remaining < 10:
                     st.warning(f"⚠️ Apollo enrichment credits low: {remaining} remaining")

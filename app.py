@@ -23,7 +23,8 @@ def _init_state():
         "funders": [],            # parsed funder list
         "funders_loaded": False,
         "serpapi_key": "",
-        "pdl_key": "",
+        "apollo_search_key": "",  # People Search key  (api/v1/mixed_people/api_search)
+        "apollo_match_key": "",   # People Match + Enrichment key
         "supabase_url": "",
         "supabase_key": "",
         "supabase_client": None,
@@ -48,8 +49,10 @@ def _load_from_secrets():
     try:
         if st.secrets.get("SERPAPI_KEY") and not st.session_state["serpapi_key"]:
             st.session_state["serpapi_key"] = st.secrets["SERPAPI_KEY"]
-        if st.secrets.get("APOLLO_API_KEY") and not st.session_state["pdl_key"]:
-            st.session_state["pdl_key"] = st.secrets["APOLLO_API_KEY"]
+        if st.secrets.get("APOLLO_SEARCH_KEY") and not st.session_state["apollo_search_key"]:
+            st.session_state["apollo_search_key"] = st.secrets["APOLLO_SEARCH_KEY"]
+        if st.secrets.get("APOLLO_MATCH_KEY") and not st.session_state["apollo_match_key"]:
+            st.session_state["apollo_match_key"] = st.secrets["APOLLO_MATCH_KEY"]
         if st.secrets.get("SUPABASE_URL") and not st.session_state["supabase_url"]:
             st.session_state["supabase_url"] = st.secrets["SUPABASE_URL"]
         if st.secrets.get("SUPABASE_ANON_KEY") and not st.session_state["supabase_key"]:
@@ -64,10 +67,10 @@ get_or_create_client()  # silently connects; errors ignored here, shown in UI be
 
 # ─── Page header ─────────────────────────────────────────────────────────────
 st.title("🔬 Staff Intelligence R&D Experiment")
-st.caption("100-Funder Validation · Google Search Discovery + PDL Enrichment")
+st.caption("100-Funder Validation · SerpApi Discovery + Apollo Match & Enrichment")
 
 # ─── Status banner ───────────────────────────────────────────────────────────
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     if st.session_state["funders_loaded"]:
@@ -83,12 +86,18 @@ with col2:
         st.error("🔍 SerpApi key missing")
 
 with col3:
-    if st.session_state["pdl_key"]:
-        st.success("👥 Apollo key set")
+    if st.session_state["apollo_search_key"]:
+        st.success("🔎 Apollo Search key set")
     else:
-        st.error("👥 Apollo key missing")
+        st.warning("🔎 Apollo Search key missing")
 
 with col4:
+    if st.session_state["apollo_match_key"]:
+        st.success("👥 Apollo Match key set")
+    else:
+        st.error("👥 Apollo Match key missing")
+
+with col5:
     if st.session_state["supabase_ok"]:
         st.success("🗄️ Supabase connected")
     elif st.session_state["supabase_url"]:
@@ -140,23 +149,34 @@ with left:
 with right:
     st.subheader("🔑 API Keys")
 
-    serper_input = st.text_input(
+    serpapi_input = st.text_input(
         "SerpApi Key",
         value=st.session_state["serpapi_key"],
         type="password",
         placeholder="your-serpapi-key-here",
     )
-    if serper_input:
-        st.session_state["serpapi_key"] = serper_input
+    if serpapi_input:
+        st.session_state["serpapi_key"] = serpapi_input
 
-    apollo_input = st.text_input(
-        "Apollo.io API Key",
-        value=st.session_state["pdl_key"],
+    st.caption("Apollo.io — two keys required for the full pipeline")
+
+    search_input = st.text_input(
+        "Apollo People Search Key",
+        value=st.session_state["apollo_search_key"],
         type="password",
-        placeholder="LYtIrKl3O4...",
+        placeholder="uXfyGdlN... (mixed_people/api_search)",
     )
-    if apollo_input:
-        st.session_state["pdl_key"] = apollo_input
+    if search_input:
+        st.session_state["apollo_search_key"] = search_input
+
+    match_input = st.text_input(
+        "Apollo Match + Enrich Key",
+        value=st.session_state["apollo_match_key"],
+        type="password",
+        placeholder="LYtIrKl3... (people/match + enrichment)",
+    )
+    if match_input:
+        st.session_state["apollo_match_key"] = match_input
 
     st.divider()
     st.subheader("🗄️ Supabase")
@@ -222,9 +242,9 @@ with s2:
 
 with s3:
     enrich = st.toggle(
-        "Enable PDL Enrichment",
+        "Enable Apollo Enrichment",
         value=st.session_state["enrich_enabled"],
-        help="Uses 1 PDL credit per profile. Disable to test discovery only.",
+        help="Uses 1 Apollo credit per profile enriched. Disable to test discovery only.",
     )
     st.session_state["enrich_enabled"] = enrich
     if enrich:
@@ -232,7 +252,7 @@ with s3:
             "Max Enrichment Credits",
             min_value=1, max_value=500,
             value=st.session_state["enrich_budget"],
-            help="Hard cap on PDL credits consumed this run",
+            help="Hard cap on Apollo credits consumed this run",
         )
         st.session_state["enrich_budget"] = int(budget)
 
