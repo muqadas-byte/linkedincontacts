@@ -68,7 +68,7 @@ def extract_funder(funder: Dict) -> Dict:
     n8n = get_n8n(funder)
     hq = funder.get("headquartersAddress") or {}
     total_assets = get_total_assets(funder)
-    website_raw = n8n.get("website") or funder.get("website") or ""
+    website_raw = n8n.get("website") or funder.get("website") or funder.get("sourceLink") or ""
     website_domain = clean_website(website_raw)
 
     leadership = n8n.get("leadership") or []
